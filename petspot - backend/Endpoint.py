@@ -13,6 +13,7 @@ def cadastrar_pet():
     sexo = data.get('sexo')  # 'M' ou 'F'
     descricao = data.get('descricao')
     id_user = data.get('id_user')
+    
 
     if not nome or not sexo or not id_user:
         return jsonify({"erro": "Campos obrigatórios: nome, sexo, id_user"}), 400
