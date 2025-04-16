@@ -1,12 +1,16 @@
 import oracledb
 
 def get_connection():
-    return oracledb.connect(
-        user="System",
-        password="Pi@fam@2025",
-        dsn="localhost/XE"
-    )
-
+    try:
+        conn = oracledb.connect(
+            user="System",
+            password="Pi@fam@2025",
+            dsn="localhost/XE"
+        )
+        return conn
+    except oracledb.DatabaseError as e:
+        print(f"Erro ao conectar com o banco: {e}")
+        raise
 
 #---------------------------------------------------------------------
 
