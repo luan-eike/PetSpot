@@ -1,0 +1,4 @@
+# anotações de bibliotecas utilizadas para fazer a integração com o banco
+
+Flask
+oracledb
