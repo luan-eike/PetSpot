@@ -8,17 +8,22 @@ import { MockEventData } from '@/data/repositories/Event/MockEventData';
 import styles from './styles';
 
 const EventScreen: React.FC = () => {
-  const handleConfirm = (eventName: string) => {
-    const message = `Presença confirmada para ${eventName}!`;
-    if (Platform.OS === 'android') {
-      ToastAndroid.show(message, ToastAndroid.SHORT);
-    } else {
-      console.log(message); // alternativa para iOS
-    }
-  };
+  const handleConfirm = async (eventJson: Record<string, any>) => {
+  
+    const resposta = await fetch('http://192.168.15.9:5000/api/eventos/1/confirmar',
+      {
+        method: 'POST', 
+        headers: {'Content-Type': 'application/json',}, 
+        body: JSON.stringify({ "id_user": eventJson['creatorId'], "id_evento": eventJson['id'] })
+      }
+    )
+    const message = await resposta.json();
+    console.log(message) //mostra o retorno no log
+    ToastAndroid.show(message['erro'], ToastAndroid.SHORT); //mostra na tela do celular se dar erro
+  }
 
   const renderItem = ({ item }: { item: Event }) => (
-    <EventCardList event={item} onConfirm={() => handleConfirm(item.name)} />
+    <EventCardList event={item} onConfirm={() => handleConfirm(item)} />
     // aqui é o que retorn quando clica em confirmar presença na tela de eventos da comunidade
   );
 
