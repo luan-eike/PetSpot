@@ -44,6 +44,45 @@ def cadastrar_pet():
         cursor.close()
         conn.close()
 
+# Endpoint para Confirmar presença em algum evento
+@app.route('/api/eventos/<int:id_evento>/confirmar' , methods=['POST'])
+def confirmar_presenca(id_evento):
+    data = request.json
+    id_user = data.get('id_user')
+
+    if not id_user:
+        return jsonify({"erro": "Campo obrigatório: id_user"}), 400
+
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            INSERT INTO Usuario_Evento (ID_User, ID_Evento)
+            VALUES (:id_user, :id_evento)
+        """, {
+            "id_user": id_user,
+            "id_evento": id_evento
+        })
+
+        conn.commit()
+        return jsonify({"mensagem": "Presença confirmada com sucesso!"}), 201
+
+    except oracledb.IntegrityError as e:
+        # Verifica se é erro de chave duplicada (presença já confirmada)
+        if "ORA-00001" in str(e):
+            return jsonify({"mensagem": "Usuário já confirmou presença neste evento."}), 409
+        return jsonify({"erro": "Erro de integridade ao confirmar presença."}), 500
+
+    except oracledb.DatabaseError as e:
+        print(f"Erro ao confirmar presença: {e}")
+        return jsonify({"erro": "Erro ao confirmar presença"}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
 # Rodando a API Flask
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
