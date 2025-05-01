@@ -1,8 +1,22 @@
 from flask import Flask, request, jsonify
 from database import get_connection  # Conexão com o Banco de Dados
-import oracledb
+import oracledb, json, socket
 
-app = Flask(__name__)
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+
+app         = Flask(__name__)
+port        = '5000'
+novo_ip     = s.getsockname()[0]
+caminho_url = r'..\src\screens\ip.json'
+
+with open(caminho_url, 'r') as arquivo:
+    dados = json.load(arquivo)
+
+dados['API_URL'] = novo_ip + ':' + port
+
+with open(caminho_url, 'w') as arquivo:
+    json.dump(dados, arquivo, indent=2)
 
 # Endpoint para cadastrar pet
 @app.route('/api/pets', methods=['POST'])
@@ -85,7 +99,4 @@ def confirmar_presenca(id_evento):
 
 # Rodando a API Flask
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
-
-
-# As requisições devem ser feitas via POSTMAN
+    app.run(host=novo_ip, port=port)
