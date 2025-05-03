@@ -1,4 +1,4 @@
-import { ToastAndroid } from 'react-native';
+import { Alert } from 'react-native';
 import { API_URL } from '../ip.json';
 
 export const handleConfirm = async (eventJson: Record<string, any>) => {
@@ -11,8 +11,7 @@ export const handleConfirm = async (eventJson: Record<string, any>) => {
       }
     )
     const message = await resposta.json();
-    console.log(message) //mostra o retorno no log
-    ToastAndroid.show(message['erro'], ToastAndroid.SHORT); //mostra na tela do celular se dar erro
+    Alert.alert(message["erro"]) //mostra na tela a mensagem de erro
     
     // aqui é o que retorn quando clica em confirmar presença na tela de eventos da comunidade
   }
